@@ -20,8 +20,25 @@
 
 ## 📁 Folder structure
 
--   React Library
--   React Consumer
+- React Library
+- React Consumer
+
+## 🚀 Getting started
+
+- Install dependencies in both folders
+
+- Go to React library and execute:
+
+```
+npm run build
+npm link
+```
+
+- Go to React Library Consumer and execute:
+
+```
+npm run dev
+```
 
 ## 🤔 Contributing
 

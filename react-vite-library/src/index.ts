@@ -3,7 +3,6 @@ import * as ReactDOMClient from "react-dom/client";
 import reactToWebComponent from "react-to-webcomponent";
 import { App } from "./App";
 
-
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {

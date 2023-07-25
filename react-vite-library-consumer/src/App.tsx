@@ -1,6 +1,6 @@
 import "./App.css";
 import "react-vite-library";
-import "react-vite-library/style.css";
+import "react-vite-library/style";
 
 function App() {
   return (
