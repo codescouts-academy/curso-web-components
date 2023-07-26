@@ -23,7 +23,7 @@
 - React Library
 - React Consumer
 
-## 🚀 Getting started
+## 🚀 Getting started
 
 - Install dependencies in both folders
 
