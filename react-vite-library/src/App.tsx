@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./index.css";
 import "./App.css";
 
-export const App = () => {
+export type Props = {
+  onCountUpdated: (count: number) => void;
+};
+
+export const App = ({ onCountUpdated }: Props) => {
   const [count, setCount] = useState(0);
+
+  useEffect(() => onCountUpdated(count), [count, onCountUpdated]);
 
   return (
     <>

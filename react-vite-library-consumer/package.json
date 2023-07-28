@@ -12,8 +12,7 @@
   "dependencies": {
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-vite-library": "file:../react-vite-library",
-    "usehooks-ts": "^2.9.1"
+    "react-vite-library": "file:../react-vite-library"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

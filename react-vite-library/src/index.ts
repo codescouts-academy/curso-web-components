@@ -1,7 +1,5 @@
-import React from "react";
-import * as ReactDOMClient from "react-dom/client";
-import reactToWebComponent from "react-to-webcomponent";
-import { App } from "./App";
+import r2wc from "./react-to-web-component";
+import { App, Props } from "./App";
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -10,12 +8,15 @@ declare global {
       "app-component": React.DetailedHTMLProps<
         React.HTMLAttributes<HTMLElement>,
         HTMLElement
-      >;
+      > &
+        Props;
     }
   }
 }
 
-customElements.define(
-  "app-component",
-  reactToWebComponent(App, React, ReactDOMClient)
-);
+const component = r2wc(App, {
+  props: {
+    onCountUpdated: "function",
+  },
+});
+customElements.define("app-component", component);

@@ -1,13 +1,14 @@
 import "./App.css";
-import { useScript } from "usehooks-ts";
+import "react-vite-library";
+import "react-vite-library/style";
 
 function App() {
-  useScript("http://localhost:3000/index.es.js");
+  const func = (count: number) => console.log(`Holas ${count}`);
 
   return (
     <>
       <h2>Consumer</h2>
-      <app-component></app-component>
+      <app-component onCountUpdated={func}></app-component>
     </>
   );
 }
