@@ -24,6 +24,7 @@ const renderSymbol = Symbol.for("r2wc.render");
 const connectedSymbol = Symbol.for("r2wc.connected");
 const contextSymbol = Symbol.for("r2wc.context");
 const propsSymbol = Symbol.for("r2wc.props");
+const REACT_PROPS = "__reactProps";
 
 /**
  * Converts a React component into a Web Component.
@@ -91,24 +92,26 @@ export default function r2wc<Props, Context>(
     connectedCallback() {
       this[connectedSymbol] = true;
       this[renderSymbol]();
-
       // @ts-ignore: There won't always be a container in the definition
       this[propsSymbol].container = this.container;
-      const reactPropName = Object.keys(this).find((f) =>
-        f.includes("__reactProps")
-      ) as keyof ReactWebComponent;
-      const reactProps = reactPropName ? this[reactPropName] : {};
+
+      const propsForReact = Object.keys(this).find((f) => {
+        return f.includes(REACT_PROPS);
+      });
+
+      //@ts-ignore
+      const reactProps = propsForReact ? this[propsForReact] : {};
 
       for (const prop of propNames) {
         const attribute = mapPropAttribute[prop];
-        const value = this.getAttribute(attribute);
+        const value = reactProps[prop] ?? this.getAttribute(attribute);
         const type = propTypes[prop];
         const transform = transforms[type];
-        if (value && transform?.parse) {
+        if (reactProps[prop]) {
+          this[propsSymbol][prop] = value;
+        } else if (value && transform?.parse) {
           //@ts-ignore
           this[propsSymbol][prop] = transform.parse(value, this);
-        } else {
-          this[propsSymbol][prop] = (reactProps as any)[prop];
         }
       }
 
@@ -123,11 +126,20 @@ export default function r2wc<Props, Context>(
       }
     }
 
-    attributeChangedCallback(attribute: string, _: string, value: string) {
+    attributeChangedCallback(attribute: string) {
       const prop = mapAttributeProp[attribute];
       const type = propTypes[prop];
       const transform = transforms[type];
 
+      const propsForReact = Object.keys(this).find((f) => {
+        return f.includes(REACT_PROPS);
+      });
+
+      //@ts-ignore
+      const reactProps = propsForReact ? this[propsForReact] : {};
+      const value = reactProps[prop] ?? this.getAttribute(attribute);
+
+      debugger;
       if (prop in propTypes && transform?.parse) {
         //@ts-ignore
         this[propsSymbol][prop] = transform.parse(value, this);

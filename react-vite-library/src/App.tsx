@@ -4,11 +4,18 @@ import viteLogo from "./assets/vite.svg";
 import "./index.css";
 import "./App.css";
 
+export interface Complex {
+  name: string;
+  value: string;
+}
+
 export type Props = {
   onCountUpdated: (count: number) => void;
+  title: string;
+  complex: Complex;
 };
 
-export const App = ({ onCountUpdated }: Props) => {
+export const App = ({ onCountUpdated, title, complex }: Props) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => onCountUpdated(count), [count, onCountUpdated]);
@@ -25,6 +32,11 @@ export const App = ({ onCountUpdated }: Props) => {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
+        <div>
+          {title}
+          <p>{complex.name}</p>
+          <p>{complex.value}</p>
+        </div>
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>

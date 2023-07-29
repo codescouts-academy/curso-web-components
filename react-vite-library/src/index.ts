@@ -17,6 +17,8 @@ declare global {
 const component = r2wc(App, {
   props: {
     onCountUpdated: "function",
+    title: "string",
+    complex: "json",
   },
 });
 customElements.define("app-component", component);
