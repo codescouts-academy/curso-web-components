@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import "react-vite-library";
-import "react-vite-library/style";
+import { useScript } from "usehooks-ts";
 
 function App() {
+  useScript("http://localhost:3000/index.es.js");
+
   const [count, setCount] = useState(0);
   const func = (count: number) => {
     setCount(count);
