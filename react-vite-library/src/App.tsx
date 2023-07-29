@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "./assets/vite.svg";
 import "./index.css";
@@ -17,7 +17,13 @@ export type Props = {
 
 export const App = ({ onCountUpdated, title, complex }: Props) => {
   const [count, setCount] = useState(0);
-  useEffect(() => onCountUpdated(count), [count, onCountUpdated]);
+  const increment = () =>
+    setCount((count) => {
+      const newCount = count + 1;
+      onCountUpdated(newCount);
+
+      return newCount;
+    });
 
   return (
     <>
@@ -36,9 +42,7 @@ export const App = ({ onCountUpdated, title, complex }: Props) => {
           <p>{complex.name}</p>
           <p>{complex.value}</p>
         </div>
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
+        <button onClick={() => increment()}>count is {count}</button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>

@@ -1,22 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import "react-vite-library";
 import "react-vite-library/style";
 
 function App() {
+  const [count, setCount] = useState(0);
   const func = (count: number) => {
-    console.log(`Hola ${count}`);
-    setTitle(count % 2 === 0 ? "Foo" : "Bar");
-    setComplex({
-      name: `Nombre ${count}`,
-      value: `${count}`,
-    });
+    setCount(count);
   };
   const [title, setTitle] = useState("");
   const [complex, setComplex] = useState({
     name: "",
     value: "",
   });
+
+  useEffect(() => {
+    setTitle(count % 2 === 0 ? "Foo" : "Bar");
+    setComplex({
+      name: `Name: ${count}`,
+      value: `Value: ${count}`,
+    });
+  }, [count]);
 
   return (
     <>
