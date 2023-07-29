@@ -20,10 +20,6 @@ export interface R2WCRenderer<Props, Context> {
   unmount: (context: Context) => void;
 }
 
-const renderSymbol = Symbol.for("r2wc.render");
-const connectedSymbol = Symbol.for("r2wc.connected");
-const contextSymbol = Symbol.for("r2wc.context");
-const propsSymbol = Symbol.for("r2wc.props");
 const REACT_PROPS = "__reactProps";
 
 /**
@@ -49,13 +45,13 @@ export default function r2wc<Props, Context>(
       ? options.props.slice()
       : (Object.keys(options.props) as PropNames<Props>)
   ).filter((prop) => {
-    //@ts-ignore
     return prop !== "container";
   });
 
   const propTypes = {} as Record<PropName<Props>, R2WCType>;
   const mapPropAttribute = {} as Record<PropName<Props>, string>;
   const mapAttributeProp = {} as Record<string, PropName<Props>>;
+
   for (const prop of propNames) {
     propTypes[prop] = Array.isArray(options.props)
       ? "string"
@@ -72,9 +68,9 @@ export default function r2wc<Props, Context>(
       return Object.keys(mapAttributeProp);
     }
 
-    [connectedSymbol] = true;
-    [contextSymbol]?: Context;
-    [propsSymbol]: Props = {} as Props;
+    private connected = true;
+    private context?: Context;
+    props: Props = {} as Props;
     container: HTMLElement;
 
     constructor() {
@@ -87,107 +83,75 @@ export default function r2wc<Props, Context>(
       } else {
         this.container = this;
       }
+
+      // @ts-ignore: There won't always be a container in the definition
+      this.props.container = this.container;
     }
 
     connectedCallback() {
-      this[connectedSymbol] = true;
-      this[renderSymbol]();
-      // @ts-ignore: There won't always be a container in the definition
-      this[propsSymbol].container = this.container;
-
-      const propsForReact = Object.keys(this).find((f) => {
-        return f.includes(REACT_PROPS);
-      });
-
-      //@ts-ignore
-      const reactProps = propsForReact ? this[propsForReact] : {};
+      this.connected = true;
+      this.render();
 
       for (const prop of propNames) {
-        const attribute = mapPropAttribute[prop];
-        const value = reactProps[prop] ?? this.getAttribute(attribute);
-        const type = propTypes[prop];
-        const transform = transforms[type];
-        if (reactProps[prop]) {
-          this[propsSymbol][prop] = value;
-        } else if (value && transform?.parse) {
-          //@ts-ignore
-          this[propsSymbol][prop] = transform.parse(value, this);
-        }
+        this.setProps(prop);
       }
 
-      renderer.update(this[contextSymbol]!, this[propsSymbol]);
+      this.update();
     }
 
     disconnectedCallback() {
-      this[connectedSymbol] = false;
+      this.connected = false;
 
-      if (this[contextSymbol]) {
-        renderer.unmount(this[contextSymbol]);
+      if (this.context) {
+        renderer.unmount(this.context);
       }
     }
 
-    attributeChangedCallback(attribute: string) {
-      const prop = mapAttributeProp[attribute];
-      const type = propTypes[prop];
-      const transform = transforms[type];
+    attributeChangedCallback(attribute: Extract<keyof Props, string>) {
+      this.setProps(attribute);
 
+      this.render();
+    }
+
+    private setProps(prop: Extract<keyof Props, string>) {
       const propsForReact = Object.keys(this).find((f) => {
         return f.includes(REACT_PROPS);
       });
 
       //@ts-ignore
       const reactProps = propsForReact ? this[propsForReact] : {};
+
+      const attribute = mapPropAttribute[prop];
       const value = reactProps[prop] ?? this.getAttribute(attribute);
-
-      debugger;
-      if (prop in propTypes && transform?.parse) {
+      const type = propTypes[prop];
+      const transform = transforms[type];
+      if (reactProps[prop]) {
+        this.props[prop] = value;
+      } else if (value && transform?.parse) {
         //@ts-ignore
-        this[propsSymbol][prop] = transform.parse(value, this);
-
-        this[renderSymbol]();
+        this.props[prop] = transform.parse(value, this);
       }
     }
 
-    [renderSymbol]() {
-      if (!this[connectedSymbol]) return;
+    private render() {
+      if (!this.connected) return;
 
-      if (!this[contextSymbol]) {
-        this[contextSymbol] = renderer.mount(
-          this.container,
-          ReactComponent,
-          this[propsSymbol]
-        );
+      if (!this.context) {
+        this.mount();
       } else {
-        renderer.update(this[contextSymbol], this[propsSymbol]);
+        this.update();
       }
     }
-  }
 
-  for (const prop of propNames) {
-    const attribute = mapPropAttribute[prop];
-    const type = propTypes[prop];
+    private update() {
+      if (!this.context) return;
 
-    Object.defineProperty(ReactWebComponent.prototype, prop, {
-      enumerable: true,
-      configurable: true,
-      get() {
-        return this[propsSymbol][prop];
-      },
-      set(value) {
-        this[propsSymbol][prop] = value;
+      renderer.update(this.context, this.props);
+    }
 
-        const transform = transforms[type];
-        if (transform?.stringify) {
-          //@ts-ignore
-          const attributeValue = transform.stringify(value);
-          const oldAttributeValue = this.getAttribute(attribute);
-
-          if (oldAttributeValue !== attributeValue) {
-            this.setAttribute(attribute, attributeValue);
-          }
-        }
-      },
-    });
+    private mount() {
+      this.context = renderer.mount(this.container, ReactComponent, this.props);
+    }
   }
 
   return ReactWebComponent;
