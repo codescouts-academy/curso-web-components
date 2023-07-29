@@ -17,7 +17,6 @@ export type Props = {
 
 export const App = ({ onCountUpdated, title, complex }: Props) => {
   const [count, setCount] = useState(0);
-
   useEffect(() => onCountUpdated(count), [count, onCountUpdated]);
 
   return (

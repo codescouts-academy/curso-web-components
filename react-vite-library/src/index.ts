@@ -1,4 +1,4 @@
-import r2wc from "./react-to-web-component";
+import { r2wc } from "r2wc";
 import { App, Props } from "./App";
 
 declare global {
