@@ -4,21 +4,25 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Vanilla</title>
     <link rel="stylesheet" href="http://localhost:3000/style.css" />
+    <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
-    <app-component
-      on-count-updated="onUpdated"
-      title="Hello"
-      complex='{"name":"Name","value":"Value"}'
-    ></app-component>
+    <div id="root">
+      <h2>Consumer</h2>
+      <app-component
+        on-count-updated="onUpdated"
+        title="Hello"
+        complex='{"name":"Name","value":"Value"}'
+      ></app-component>
+    </div>
+
     <script>
       function onUpdated(number) {
         console.log(number);
       }
     </script>
-
     <script src="http://localhost:3000/index.es.js"></script>
   </body>
 </html>
