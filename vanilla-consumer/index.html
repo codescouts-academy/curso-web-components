@@ -2,7 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vanilla</title>
     <link rel="stylesheet" href="http://localhost:3000/style.css" />
@@ -14,27 +13,28 @@
       <app-component
         id="app"
         on-count-updated="onUpdated"
-        title="Hello"
-        complex='{"name":"Name","value":"Value"}'
+        title=""
+        complex="{}"
       ></app-component>
     </div>
 
     <script>
-      const app = document.getElementById("app");
-      document.onload = () => {
+      window.onload = () => {
         onUpdated(0);
       };
+
+      const app = document.getElementById("app");
 
       function onUpdated(count) {
         console.log(count);
 
-        app.props.title = count % 2 === 0 ? "Foo" : "Bar";
-        app.props.complex = {
-          name: `Name: ${count}`,
-          value: `Value: ${count}`,
+        app.props = {
+          title: count % 2 === 0 ? "Foo" : "Bar",
+          complex: {
+            name: `Name: ${count}`,
+            value: `Value: ${count}`,
+          },
         };
-
-        app.update();
       }
     </script>
     <script src="http://localhost:3000/index.es.js"></script>
