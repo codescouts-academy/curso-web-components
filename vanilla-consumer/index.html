@@ -12,6 +12,7 @@
     <div id="root">
       <h2>Consumer</h2>
       <app-component
+        id="app"
         on-count-updated="onUpdated"
         title="Hello"
         complex='{"name":"Name","value":"Value"}'
@@ -19,8 +20,21 @@
     </div>
 
     <script>
-      function onUpdated(number) {
-        console.log(number);
+      const app = document.getElementById("app");
+      document.onload = () => {
+        onUpdated(0);
+      };
+
+      function onUpdated(count) {
+        console.log(count);
+
+        app.props.title = count % 2 === 0 ? "Foo" : "Bar";
+        app.props.complex = {
+          name: `Name: ${count}`,
+          value: `Value: ${count}`,
+        };
+
+        app.update();
       }
     </script>
     <script src="http://localhost:3000/index.es.js"></script>
